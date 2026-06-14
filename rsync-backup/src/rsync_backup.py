@@ -18,12 +18,13 @@ from modules import (
     clear_screen,
     write_backup_log,
 )
+from modules.configuration import CONFIG
 
-
+# TODO UPDATE this to your desired version number
 VERSION = "0.3.0"
 """Package version."""
 
-WRITE_BACKUP_LOG = True
+# WRITE_BACKUP_LOG = Config.write_backup_log
 """Flag to write the backup log file to the target directory."""
 
 clear_screen()
@@ -36,5 +37,5 @@ run_rsync_command(SOURCE, TARGET)
 
 display_completed(SOURCE, TARGET)
 
-if WRITE_BACKUP_LOG:
+if CONFIG.write_logs:
     write_backup_log(SOURCE, TARGET)

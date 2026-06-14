@@ -39,7 +39,7 @@ def get_dropped_file():
     file_drop = file_drop.strip(" &'\"")
 
     # Clean Windows character issues inside string
-    file_drop = file_drop.replace("\ ", " ")
+    file_drop = file_drop.replace(r"\ ", " ")
     file_drop = file_drop.replace("''", "'")
 
     # Set Path object and return
