@@ -1,62 +1,49 @@
 """
-* This is a sample configuration module for loading JSON data *
+Configuration loading and defaults for the Rsync Backup app.
 
-This module loads configuration data from a JSON file,
-applies default values if the file is not found,
-and processes the data to generate a configuration dictionary for import.
-
-Modify this module to use loadconfig.py to suit your needs in loading your
-configuration data.
+This module locates the app support directory, reads the JSON
+configuration file when it exists, falls back to built-in defaults when
+it does not, and exposes the resulting settings through a small
+configuration object used by the rest of the application.
 """
 
 from dataclasses import dataclass
 from pathlib import Path
 
-# TODO Import the load_config function from its relative path
 from .loadconfig import load_config
 
-# TODO Update to your desired JSON file location
-JSON = Path().home() / "PyAppFiles" / "Rsync Backup" / "config.json"
+# App support paths used for persistent configuration and logging.
+_APP_SUPPORT_DIR = Path().home() / "PyAppFiles" / "Rsync Backup"
+_JSON = _APP_SUPPORT_DIR / "config.json"
+_LOG_FILE = _APP_SUPPORT_DIR / "Backup_Log.txt"
 
-# TODO Update to your Default values for your JSON data
-DEFAULTS = {
-    "write logs": True,
+# Default settings used when the JSON file is missing or incomplete.
+_DEFAULTS = {
+    "write log": True,
     "display progress details": True,
-    "remove deleted files from destination": False,
+    "remove deleted files from destination": True,
 }
 
-# Load (or set defaults) config json data
-data = load_config(json_path=JSON, default_data=DEFAULTS)
+# Load the saved settings, or fall back to the default values.
+data = load_config(json_path=_JSON, default_data=_DEFAULTS)
 
-# TODO Work with the JSON data to generate your configuration values
-# important_number = data["write logs"] ** 2
-# working_dir = data["working folder name"]
-# file_name = data["output file name"].lower()
-
-# TODO Update this formatted config data (Import this)
-# CONFIG = {
-#     "write logs": data["write logs"],
-#     "display progress details": data["display progress details"],
-#     "remove deleted files from destination": data["remove deleted files from destination"],
-# }
 
 @dataclass
 class Config:
-    write_logs: bool
+    """Container for the runtime configuration values used by the app."""
+
+    write_log: bool
     display_progress_details: bool
     remove_deleted_files_from_destination: bool
-    
+    json_path: Path = _JSON
+    log_file: Path = _LOG_FILE
+
+
+# Create the shared configuration object for the rest of the program.
 CONFIG = Config(
-    write_logs=data["write logs"],
+    write_log=data["write log"],
     display_progress_details=data["display progress details"],
-    remove_deleted_files_from_destination=data["remove deleted files from destination"]
+    remove_deleted_files_from_destination=data["remove deleted files from destination"],
+    json_path=_JSON,
+    log_file=_LOG_FILE,
 )
-
-
-# TODO Or just load the config JSON data without modification (OR Import this)
-# CONFIG2 = load_config(json_path=JSON, default_data=DEFAULTS)
-
-# Example usage/test of the configuration data
-if __name__ == "__main__":
-    print("CONFIG:", CONFIG)
-    # print("CONFIG2:", CONFIG2)
