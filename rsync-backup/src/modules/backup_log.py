@@ -1,30 +1,30 @@
 """
+Backup-log writing helpers for the Rsync Backup app.
 
-Writes an optional Backup_Log.txt file to the target directory.
-Entries: [File/Folder] - Complete - Date - Time
-    
+This module appends a timestamped entry to the backup log file so each
+run records the source and destination paths together with the completion
+date and time.
 """
 
 from pathlib import Path
 from datetime import datetime
 
 
-def write_backup_log(source, target) -> None:
-    """Writes an optional Backup_Log.txt file to the target directory.
-    Entries: [File/Folder] - Complete - Date - Time
+def write_backup_log(source, target, log_file) -> None:
+    """Append a completion entry to the backup log file.
 
     Args:
-        source (Path): Path pointing to the source file/folder.
-        target (Path): Path pointing to the target folder.
+        source (Path): Path to the source file or folder that was backed up.
+        target (Path): Path to the destination folder that received the backup.
+        log_file (Path): File where the log entry should be appended.
     """
-    # Gets the current date and time to build the log entry.
+    # Capture the current timestamp for the log entry.
     date_time = datetime.now()
     current_date_time = date_time.strftime("%m/%d/%Y - %H:%M")
-    log_entry = f"[ {source.name} ] - Complete - {current_date_time}\n"
-    # Sets the path for the log file.
-    log_file = Path(target).resolve() / "Backup_Log.txt"
-    # Corrects the duplicated escape characters.
-    log_file = str(log_file).replace("\\", "")
-    # Writes the log entry.
+
+    # Format the entry with the source, target, and completion time.
+    log_entry = f"[{source}] -> [{target}] - Complete - {current_date_time}\n"
+
+    # Append the log record to the configured backup log file.
     with open(log_file, "a", encoding="utf-8") as text:
         text.write(log_entry)
